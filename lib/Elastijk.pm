@@ -30,7 +30,11 @@ sub request {
     my $arg = $_[0];
     if ($arg->{body}) {
         $arg = {%{$_[0]}};
-        $arg->{body} = $JSON->encode( $arg->{body} );
+        if ( ref($arg->{body}) eq 'HASH' or ref($arg->{body}) eq 'ARRAY' ) {
+            $arg->{body} = $JSON->encode( $arg->{body} );
+        } else {
+            $arg->{body} = "$arg->{body}";
+        }
     }
     my ($status, $res_body) = request_raw($arg);
     $res_body = $res_body ? eval { $JSON->decode($res_body) } : undef;
